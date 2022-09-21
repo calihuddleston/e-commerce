@@ -1,5 +1,4 @@
 const router = require("express").Router();
-const { DataTypes } = require("sequelize/types");
 const { Product, Category, Tag, ProductTag } = require("../../models");
 
 // The `/api/products` endpoint
@@ -9,11 +8,11 @@ router.get("/", async (req, res) => {
   // find all products
   // be sure to include its associated Category and Tag data
   try {
-    const productData = Product.findAll(req.body, {
+    const productData = await Product.findAll(req.body, {
       include: [{ model: Category }, { model: Tag }],
     });
-    res.status(200).json(productData);
-  } catch {
+    res.json(productData);
+  } catch (err) {
     res.status(500).json(err);
   }
 });
@@ -23,7 +22,7 @@ router.get("/:id", async (req, res) => {
   // find a single product by its `id`
   // be sure to include its associated Category and Tag data
   try {
-    const productData = Product.findByPk(req.body, {
+    const productData = await Product.findByPk(req.params.id, {
       include: [{ model: Category }, { model: Tag }],
     });
     res.status(200).json(productData);
@@ -43,12 +42,10 @@ router.post("/", async (req, res) => {
     }
   */
   try {
-    const productData = Product.create(req.body, {
-      product_name: DataTypes.STRING,
-      price: DataTypes.DECIMAL,
-      stock: DataTypes.INTEGER,
-      tagIds: DataTypes.INTEGER,
+    const productData = Product.create({
+      product_id: req.body.product_id,
     });
+    res.status(200).json(productData);
   } catch (err) {
     res.status(500).json(err);
   }
@@ -120,8 +117,10 @@ router.put("/:id", (req, res) => {
 router.delete("/:id", (req, res) => {
   // delete one product by its `id` value
   try {
-    const productData = Product.destroy(req.params.id, {
-      include: [{ model: Category }, { model: Tag }],
+    const productData = Product.destroy({
+      where: {
+        id: req.params.id,
+      },
     });
     res.status(200).json(productData);
   } catch (err) {

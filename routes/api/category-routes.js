@@ -38,8 +38,8 @@ router.get("/:id", async (req, res) => {
 router.post("/", async (req, res) => {
   // create a new category
   try {
-    const categoryData = await Category.create(req.body, {
-      include: [{ model: Product }],
+    const categoryData = await Category.create({
+      category_id: req.body.category_id,
     });
     res.status(200).json(categoryData);
   } catch (err) {
@@ -62,8 +62,10 @@ router.put("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   // delete a category by its `id` value
   try {
-    const categoryData = await Category.destroy(req.body, {
-      include: [{ model: Product }],
+    const categoryData = await Category.destroy({
+      where: {
+        id: req.params.id,
+      },
     });
     res.status(200).json(categoryData);
   } catch (err) {

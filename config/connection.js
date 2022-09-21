@@ -13,7 +13,6 @@ const sequelize = process.env.JAWSDB_URL
         dialectOptions: {
           decimalNumbers: true,
         },
-        port: 3001,
       }
     );
 
